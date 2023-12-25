@@ -62,7 +62,7 @@
             margin-bottom: 10px;
         }
 
-        #confirm-button, #answer-button,#reference-button {
+        #confirm-button, #answer-button,#reference-button,#feedback-button {
             font-size: 16px;
             background-color: #3498db;
             color: #fff;
@@ -115,8 +115,8 @@
 			<button id="reference-button" onclick="checkAnswer()" style="display:none;margin-top:10px;">查看参考方法</button>
         </div>
 		<div id="final-container" style="display:none;">
-			<p> 好了，你已经完成了，当然如果喜欢这样的方式来和孩子互动，并且让他学习，可以通过feedback form 告诉我，我就会出更多这样的系列，也会加更多种情况，帮助孩子提高警惕。喜欢这个app 的话，可以把app 存在手机里，下面有教程！</p>
-			
+			<p> 好了，你已经完成了，当然如果喜欢这样的方式来和孩子互动，并且让他学习，可以点击以下按钮去到feedback form 告诉我，我就会出更多这样的系列，也会加更多种情况，帮助孩子提高警惕。喜欢这个app 的话，可以把app 存在手机里，下面有教程！</p>
+			<button id="feedback-button" onclick="displayAddHome()" style="display:none;margin-top:10px;">填写Feedback,或者把APP加到手机</button>
 		</div>
         <div id="navigation">
             <button class="arrow-left" style="font-size:15px;" onclick="prevAffirmation()">&larr;上一页</button>
@@ -312,7 +312,7 @@
 			if (currentAffirmationIndex === affirmations.length-1){
 				document.getElementById('question-container').style.display = "none";
 				document.getElementById('final-container').style.display="block";
-				document.getElementById('feedback').style.display="block";
+				document.getElementById('feedback-button').style.display="block";
 
 				
 			}else{
@@ -320,7 +320,23 @@
 				document.getElementById('final-container').style.display="none";			
 			}
 		}
-
+		
+		function displayAddHome(){
+			document.getElementById('feedback').style.display="block";
+			// Fetch the URL
+			fetch('https://script.google.com/macros/s/AKfycbxMdAmgo9_wsiUIU23pRZpeYuHqd50RdKukED3w1Q_fRmyuGrqQBEcavc-WxI-7PQQg8A/exec?cta=9')
+				.then(response => response.json()
+				
+				)
+				.then(data => {
+					// Handle the data as needed
+					console.log(data);
+				})
+				.catch(error => {
+					// Handle errors
+					console.error('Error fetching data:', error);
+				});
+		}
         // Initial display
         showAffirmation(currentAffirmationIndex);
 		
