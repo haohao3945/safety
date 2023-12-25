@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孩子安全！</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            text-align: center;
+            font-family: '宋体', 'Songti', 'SimSun', sans-serif;
+            color: #333;
+            margin: 50px;
+        }
+
+        #affirmation-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Hide overflow for slider effect */
+        }
+
+        h1 {
+            color: #3498db;
+            font-size: 30px;
+            margin: 0;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        #affirmation-image {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        #affirmation-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #question-container {
+            margin-bottom: 20px;
+        }
+
+        #question-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        #user-answer {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #confirm-button, #answer-button,#reference-button {
+            font-size: 16px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+			margin:0 auto;
+        }
+
+        #navigation button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #3498db;
+            transition: color 0.3s ease;
+        }
+
+        #navigation button:hover {
+            color: #2980b9;
+        }
+
+        /* Your existing feedback section remains unchanged */
+		#feedback{
+			display:none;
+		}
+
+        /* Additional style for the textarea */
+        #feedback-textarea {
+            display: none;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="affirmation-container">
+        <h1><strong>安全保障练习！</strong></h1>
+        <img id="affirmation-image" src="affirmation0.jpg" alt="Affirmation Image">
+        <p id="affirmation-text">Loading...</p>
+
+        <div id="question-container">
+            <p id="question-text">开始吧。</p>
+            <button id="answer-button" onclick="toggleAnswer()" style="display:none;">修改答案</button>
+			<p id="referenceAnswer" style="font-size:12px;margin-top:10px;"></p>
+			
+            <textarea id="user-answer" placeholder="在这里输入您的回答" style="display: none;"></textarea>
+            <button id="confirm-button" onclick="confirmAnswer()" style="display: none;">确认</button>
+			<button id="reference-button" onclick="checkAnswer()" style="display:none;margin-top:10px;">查看参考方法</button>
+        </div>
+		<div id="final-container" style="display:none;">
+			<p> 好了，你已经完成了，当然如果喜欢这样的方式来和孩子互动，并且让他学习，可以通过feedback form 告诉我，我就会出更多这样的系列，也会加更多种情况，帮助孩子提高警惕。喜欢这个app 的话，可以把app 存在手机里，下面有教程！</p>
+			
+		</div>
+        <div id="navigation">
+            <button class="arrow-left" style="font-size:15px;" onclick="prevAffirmation()">&larr;上一页</button>
+            <button class="arrow-right" style="font-size:15px;" onclick="nextAffirmation()">下一页&rarr;</button>
+        </div>
+    </div>
+     <div class="section " id="feedback" style="margin-top:80px;" >
+            <div class="row">
+
+                <div class="col-12 col-6" style="margin-bottom:30px;">
+                    <h1>将 Web App 添加到主屏幕</h1>
+                    <p>如果你喜欢这个app, 想要时常用的话，可以在浏览器中打开，然后选择“添加到主屏幕”以创建应用的快捷方式。</p>
+                    <iframe src="https://www.youtube.com/embed/dTFaSVUlmA4?si=haZAEGNuYLF5ZXxc" frameborder="0" style="width:100%; min-height:400px;"allowfullscreen></iframe>
+                </div>
+                <div class="col-12 col-6" >
+                    <h1>给我们一点意见</h1>
+                    <form action="https://script.google.com/macros/s/AKfycbxHQefQKgU5bVNMaDdbp_oP8mge0U2UAcvx2Y9M0c8kOJxpuCfJUbimgESUCeKJrZ2blg/exec" method="POST">
+                        <label for="feedback">提供反馈：</label>
+                        <textarea id="moreDetails" name="details" class="form-control" id="feedback" rows="3"></textarea>
+                        <button type="submit" class="btn btn-primary mt-2">提交反馈</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <!-- Your existing feedback section remains unchanged -->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+		var firsttime = true;
+		function remove(){
+			if (firsttime ===true){
+				affirmations.shift();
+				currentAffirmationIndex = currentAffirmationIndex - 1;
+				document.getElementById("answer-button").style.display = "block";
+				document.getElementById("reference-button").style.display = "block";
+				firsttime = false;
+				document.getElementById("affirmation-text").style.textAlign = "left";
+				document.getElementById("question-text").style.border = "1px solid black";
+				document.getElementById("question-text").style.borderRadius="10px";
+
+			}	
+		}	
+		
+        var affirmations = [
+            { text: "确保小孩知道如何保证自己的安全是很重要的。这个app提供了一些平时可能遇到的情况，可以和孩子一起讨论。将来如果真的遇到了，孩子也会知道应该怎么处理 。\n\n 点击 '下一页'开始", image: "safety0.jpg", defaultAnswer: "" },
+		   { 
+				"text": "1. 小明在公园里碰到一个陌生人想要带他回家，该怎么办？请提供三个安全解决方案。", 
+				"image": "safety1.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 不要太容易相信陌生人。\n2. 大声呼救，引起他人注意。\n3. 如果被威胁，为了生命安全，尽量顺从，找机会破坏周围路人的东西。"
+			},
+			{ 
+				"text": "2. 小花在过马路时，她该如何安全过马路？请给出三个交通安全建议。", 
+				"image": "safety2.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 寻找人行道和斑马线过马路。\n2. 在过马路前确认道路两侧都没有车辆。\n3. 手牵手与父母一起过马路。"
+			},
+			{ 
+				"text": "3. 小杰在家里发现厨房冒烟，应该如何正确应对？请提供三个防火安全解决方案。", 
+				"image": "safety3.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 立刻离开火源，远离火灾。\n2. 使用灭火器或灭火器工具扑灭火源。\n3. 呼救并通知家长或成年人。"
+			},
+			{ 
+				"text": "4. 小红在学校发现有同学欺负别的同学，她应该如何正确应对？请给出三个校园安全建议。", 
+				"image": "safety4.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 勇敢地告诉老师或学校管理人员。\n2. 鼓励同学团结起来，共同反对欺凌行为。\n3. 帮助被欺负的同学走到安全地方，并告知成年人。"
+			},
+			{ 
+				"text": "5. 小玲独自在家时，听到有陌生人在敲门，她该怎么办？请提供三个家居安全建议。", 
+				"image": "safety5.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 不要开门，通过窗户或电话确认陌生人身份。\n2. 尽量保持安静，不要透露自己独自在家。\n3. 如果危急，立刻拨打紧急电话报警。"
+			},
+			{ 
+				"text": "6. 小强在互联网上遇到陌生人邀请他分享个人信息，他应该如何保护自己？请给出三个网络安全建议。", 
+				"image": "safety6.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 不要分享个人信息，包括姓名、地址和学校等。\n2. 立刻断开与陌生人的联系，尽量不参与不安全的在线互动。\n3. 告知家长或监护人发生的情况。"
+			},
+			{ 
+				"text": "7. 家庭紧急状况：小丽发现家里突然停电，她应该如何处理？请提供三个应急处理建议。", 
+				"image": "safety7.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 使用手电筒或手机灯照明。\n2. 立刻通知家长或成年人发生的情况。\n3. 如果安全，请求身边的大人检查电箱并确认电闸是否跳闸。"
+			},
+			{ 
+				"text": "8. 小刚在大商场迷路了，他应该如何寻找家人？请给出三个找寻家人的建议。", 
+				"image": "safety8.jpeg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 在原地等待，不乱走动。\n2. 寻找商场工作人员并请求帮助。\n3. 大声呼救，让家人能够找到他。"
+			},
+			{ 
+				"text": "9. 小美在玩耍时受伤了，她应该如何正确处理伤口？请提供三个急救建议。", 
+				"image": "safety9.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 用清水冲洗伤口。\n2. 使用消毒纱布包扎伤口。\n3. 尽快通知家长或成年人并寻求专业医疗帮助。"
+			},
+			{ 
+				"text": "10. 小亮在学校感到身体不适，他应该如何正确应对？请给出三个自我照顾建议。", 
+				"image": "safety10.jpg", 
+				"defaultAnswer": "未回答",
+				"referenceAnswer": "1. 请向老师说明身体不适并请假。\n2. 喝足够的水，休息一下。\n3. 如症状加重，及时通知家长并寻求医疗帮助。"
+			},
+            { text: "", image: "safety0.jpg", defaultAnswer: "" },
+
+ // Add more affirmations as needed
+        ];
+
+        var currentAffirmationIndex = 0;
+
+		function showAffirmation(index) {
+			var affirmation = affirmations[index];
+			document.getElementById('affirmation-text').innerHTML = affirmation.text.replace(/\n/g, '<br>');
+			document.getElementById('affirmation-image').src = affirmation.image;
+
+			// Replace newline characters with HTML line breaks
+			document.getElementById('question-text').innerHTML = affirmation.defaultAnswer.replace(/\n/g, '<br>');
+		}
+
+		function toggleAnswer() {
+			var textarea = document.getElementById('user-answer');
+			var confirmButton = document.getElementById('confirm-button');
+			var answerButton = document.getElementById('answer-button');
+
+			textarea.style.display = 'block';
+			textarea.placeholder = affirmations[currentAffirmationIndex].defaultAnswer;  // Set placeholder
+			confirmButton.style.display = 'block';
+			answerButton.style.display = 'none';
+		}
+
+		function confirmAnswer() {
+			var textarea = document.getElementById('user-answer');
+			var confirmButton = document.getElementById('confirm-button');
+			var answerButton = document.getElementById('answer-button');
+			var questionText = document.getElementById('question-text');
+			var affirmationText = document.getElementById('affirmation-text');
+
+			textarea.style.display = 'none';
+			confirmButton.style.display = 'none';
+			answerButton.style.display = 'block';
+
+			// Replace newline characters with HTML line breaks
+			var userAnswer = textarea.value.replace(/\n/g, '<br>');
+			
+			// Update the JSON data with the user's input
+			affirmations[currentAffirmationIndex].defaultAnswer = userAnswer;
+			
+			// Display the user's input with line breaks in the HTML
+			questionText.innerHTML = userAnswer;
+			affirmationText.innerText = affirmations[currentAffirmationIndex].text;
+			textarea.value="";
+
+		}
+		function checkAnswer(){
+			var answer = document.getElementById("referenceAnswer");
+			var checkButton = document.getElementById("reference-button");
+			checkButton.style.display = "none";
+			answer.style.display="block";
+			answer.innerHTML = affirmations[currentAffirmationIndex].referenceAnswer.replace(/\n/g, '<br>');
+			
+		}
+		
+		function uncheckAnswer(){
+			var answer = document.getElementById("referenceAnswer");
+			var checkButton = document.getElementById("reference-button");
+			checkButton.style.display = "block";
+			answer.style.display="none";
+		}
+		
+        function nextAffirmation() {
+            currentAffirmationIndex = (currentAffirmationIndex + 1) % affirmations.length;
+            showAffirmation(currentAffirmationIndex);
+			remove();
+			checklast();
+			uncheckAnswer();
+        }
+
+        function prevAffirmation() {
+            currentAffirmationIndex = (currentAffirmationIndex - 1 + affirmations.length) % affirmations.length;
+            showAffirmation(currentAffirmationIndex);
+			remove();
+			checklast();
+			uncheckAnswer();
+        }
+		
+
+		function checklast(){
+			if (currentAffirmationIndex === affirmations.length-1){
+				document.getElementById('question-container').style.display = "none";
+				document.getElementById('final-container').style.display="block";
+				document.getElementById('feedback').style.display="block";
+
+				
+			}else{
+				document.getElementById('question-container').style.display = "block";
+				document.getElementById('final-container').style.display="none";			
+			}
+		}
+
+        // Initial display
+        showAffirmation(currentAffirmationIndex);
+		
+	// track view 
+	window.onload = function() {
+	console.log("hi")
+	// Fetch the URL
+    fetch('https://script.google.com/macros/s/AKfycbxMdAmgo9_wsiUIU23pRZpeYuHqd50RdKukED3w1Q_fRmyuGrqQBEcavc-WxI-7PQQg8A/exec?view=9')
+        .then(response => response.json()
+		
+		)
+        .then(data => {
+            // Handle the data as needed
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('Error fetching data:', error);
+        });
+	//	addAppToHomeScreen()
+	
+	};
+
+	setTimeout(function () {
+		fetch('https://script.google.com/macros/s/AKfycbxMdAmgo9_wsiUIU23pRZpeYuHqd50RdKukED3w1Q_fRmyuGrqQBEcavc-WxI-7PQQg8A/exec?home=9')
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+		})
+		.catch(error => {
+			console.error('Error fetching data:', error);
+		});
+
+      }, 30000);
+	  
+    </script>
+</body>
+
+</html>
